@@ -23,15 +23,15 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"wswslzp.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 Hexo的安装与使用Hexo怎么安装，直接百度即可。 使用hexo在本地创建博客目录：在Shell下面使用命令 1$ hexo init &lt;b">
+<meta name="description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。 Hexo的安装与使用Hexo怎么安装，直接百度即可。 使用hexo在本地创建博客目录">
 <meta property="og:type" content="article">
 <meta property="og:title" content="个人建站流程">
 <meta property="og:url" content="https://wswslzp.github.io/2021/04/29/%E4%B8%AA%E4%BA%BA%E5%BB%BA%E7%AB%99%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Wswslzp&#39;s Blog">
-<meta property="og:description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 Hexo的安装与使用Hexo怎么安装，直接百度即可。 使用hexo在本地创建博客目录：在Shell下面使用命令 1$ hexo init &lt;b">
+<meta property="og:description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。 Hexo的安装与使用Hexo怎么安装，直接百度即可。 使用hexo在本地创建博客目录">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-04-29T08:48:20.000Z">
-<meta property="article:modified_time" content="2021-04-29T09:00:04.273Z">
+<meta property="article:modified_time" content="2021-04-29T09:18:43.106Z">
 <meta property="article:author" content="Zhengpeng Liao">
 <meta name="twitter:card" content="summary">
 
@@ -147,7 +147,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Hexo-Github-Page-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"><span class="nav-number">1.</span> <span class="nav-text">使用Hexo + Github Page 搭建个人网站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">Hexo的安装与使用</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Hexo-Github-Page-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"><span class="nav-number">1.</span> <span class="nav-text">使用Hexo + Github Page 搭建个人网站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">Hexo的安装与使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">博客的配置</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -225,7 +225,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-04-29 16:48:20 / Modified: 17:00:04" itemprop="dateCreated datePublished" datetime="2021-04-29T16:48:20+08:00">2021-04-29</time>
+      <time title="Created: 2021-04-29 16:48:20 / Modified: 17:18:43" itemprop="dateCreated datePublished" datetime="2021-04-29T16:48:20+08:00">2021-04-29</time>
     </span>
 
   
@@ -239,15 +239,25 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="使用Hexo-Github-Page-搭建个人网站"><a href="#使用Hexo-Github-Page-搭建个人网站" class="headerlink" title="使用Hexo + Github Page 搭建个人网站"></a>使用<code>Hexo</code> + Github Page 搭建个人网站</h1><p>在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。</p>
+<p>不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。</p>
 <h2 id="Hexo的安装与使用"><a href="#Hexo的安装与使用" class="headerlink" title="Hexo的安装与使用"></a>Hexo的安装与使用</h2><p>Hexo怎么安装，直接百度即可。</p>
 <p>使用hexo在本地创建博客目录：在Shell下面使用命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init &lt;blog_dir_name&gt;</span><br></pre></td></tr></table></figure>
 
 <p>即可创建一整套预先设定好的博客工程模板。</p>
 <p>使用hexo创建一个新的博文：在Shell下面使用命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo n <span class="string">&quot;&lt;blog_article_title&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo n[ew] <span class="string">&quot;&lt;blog_article_title&gt;&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>即可创建指定标题的文章。</p>
+<p>即可创建指定标题的文章。文章以Markdown格式的文件保存在Blog的source子目录下，我们使用对应的编辑器即可编写博客的内容。</p>
+<p>编译生成所需的网页以及发布到Github上：在Shell使用命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g[enerate]</span><br><span class="line">$ hexo d[eploy]</span><br></pre></td></tr></table></figure>
+
+<p>即可。</p>
+<h2 id="博客的配置"><a href="#博客的配置" class="headerlink" title="博客的配置"></a>博客的配置</h2><p>博客的配置文件位于博客的根目录下，名为 <code>_config.yml</code> 。重要的配置信息包含在文件的开头和结尾处。</p>
+<p>开头包括了博客的名字，作者的名字以及Blog的域名等等重要信息。结尾则配置了Blog的发布方式。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">	<span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">	<span class="attr">repo:</span> <span class="string">https://github.com/wswslzp/wswslzp.github.io.git</span></span><br><span class="line">	<span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，前提是你的Github里面有这个repo，没有就创建一个，以 <code>&lt;user_name&gt;.github.io</code> 来命名。</p>
 
     </div>
 
