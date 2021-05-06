@@ -23,22 +23,22 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"wswslzp.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。 Hexo的安装与使用Hexo怎么安装，直接百度即可。">
+<meta name="description" content="删除GitHub远程库中的文件：123git rm -r --cached &lt;delete-dir&#x2F;file&gt;git commit -m &quot;delete &lt;sth&gt;&quot;git push origin  使用裸git库作为服务器与本地机的中转站 首先在中转服务器上建立新裸的git repo123cd &lt;repo_path&gt;mkdir &lt;re">
 <meta property="og:type" content="article">
-<meta property="og:title" content="个人建站流程">
-<meta property="og:url" content="https://wswslzp.github.io/2021/04/29/%E4%B8%AA%E4%BA%BA%E5%BB%BA%E7%AB%99%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:title" content="Git&amp;Github相关">
+<meta property="og:url" content="https://wswslzp.github.io/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/index.html">
 <meta property="og:site_name" content="Wswslzp&#39;s Blog">
-<meta property="og:description" content="使用Hexo + Github Page 搭建个人网站在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。 不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。 Hexo的安装与使用Hexo怎么安装，直接百度即可。">
+<meta property="og:description" content="删除GitHub远程库中的文件：123git rm -r --cached &lt;delete-dir&#x2F;file&gt;git commit -m &quot;delete &lt;sth&gt;&quot;git push origin  使用裸git库作为服务器与本地机的中转站 首先在中转服务器上建立新裸的git repo123cd &lt;repo_path&gt;mkdir &lt;re">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-29T08:48:20.000Z">
-<meta property="article:modified_time" content="2021-04-30T09:46:27.393Z">
+<meta property="article:published_time" content="2021-05-06T12:23:14.000Z">
+<meta property="article:modified_time" content="2021-05-06T12:30:22.377Z">
 <meta property="article:author" content="Zhengpeng Liao">
-<meta property="article:tag" content="网站">
-<meta property="article:tag" content="博客">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="GitHub">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://wswslzp.github.io/2021/04/29/%E4%B8%AA%E4%BA%BA%E5%BB%BA%E7%AB%99%E6%B5%81%E7%A8%8B/">
+<link rel="canonical" href="https://wswslzp.github.io/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/">
 
 
 <script class="page-configurations">
@@ -50,7 +50,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>个人建站流程 | Wswslzp's Blog</title>
+<title>Git&Github相关 | Wswslzp's Blog</title>
   
 
 
@@ -160,7 +160,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Hexo-Github-Page-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"><span class="nav-number">1.</span> <span class="nav-text">使用Hexo + Github Page 搭建个人网站</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">Hexo的安装与使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">博客的配置</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A0%E9%99%A4GitHub%E8%BF%9C%E7%A8%8B%E5%BA%93%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">删除GitHub远程库中的文件：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%A3%B8git%E5%BA%93%E4%BD%9C%E4%B8%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E6%9C%AC%E5%9C%B0%E6%9C%BA%E7%9A%84%E4%B8%AD%E8%BD%AC%E7%AB%99"><span class="nav-number">2.</span> <span class="nav-text">使用裸git库作为服务器与本地机的中转站</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E6%8F%90%E4%BA%A4%E5%8E%86%E5%8F%B2%E4%BB%A5%E5%8F%8A%E4%BF%AE%E6%94%B9%E5%8E%86%E5%8F%B2"><span class="nav-number">3.</span> <span class="nav-text">查看文件提交历史以及修改历史</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%99git-repo%E6%89%93tag"><span class="nav-number">4.</span> <span class="nav-text">给git repo打tag</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -236,7 +236,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wswslzp.github.io/2021/04/29/%E4%B8%AA%E4%BA%BA%E5%BB%BA%E7%AB%99%E6%B5%81%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="https://wswslzp.github.io/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://i.loli.net/2021/04/30/4u5yKnedvY2rZ8t.jpg">
@@ -249,7 +249,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          个人建站流程
+          Git&Github相关
         </h1>
 
         <div class="post-meta-container">
@@ -259,16 +259,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-04-29 16:48:20" itemprop="dateCreated datePublished" datetime="2021-04-29T16:48:20+08:00">2021-04-29</time>
+      <time title="创建时间：2021-05-06 20:23:14 / 修改时间：20:30:22" itemprop="dateCreated datePublished" datetime="2021-05-06T20:23:14+08:00">2021-05-06</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-30 17:46:27" itemprop="dateModified" datetime="2021-04-30T17:46:27+08:00">2021-04-30</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -289,28 +283,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="使用Hexo-Github-Page-搭建个人网站"><a href="#使用Hexo-Github-Page-搭建个人网站" class="headerlink" title="使用Hexo + Github Page 搭建个人网站"></a>使用<code>Hexo</code> + Github Page 搭建个人网站</h1><p>在Windows WSL环境下，直接安装 Node.js 和 npm，作为准备工具和运行环境。直接在Windows环境下安装Node.js 和npm，使用的时候直接报错，Linux环境下比较省心。</p>
-<p>不知道是否是翻墙工具的原因，发布博文和访问博文都需要代理工具。</p>
-<h2 id="Hexo的安装与使用"><a href="#Hexo的安装与使用" class="headerlink" title="Hexo的安装与使用"></a>Hexo的安装与使用</h2><p>Hexo怎么安装，直接百度即可。</p>
-<span id="more"></span>
+        <h1 id="删除GitHub远程库中的文件："><a href="#删除GitHub远程库中的文件：" class="headerlink" title="删除GitHub远程库中的文件："></a>删除GitHub远程库中的文件：</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rm -r --cached &lt;delete-dir/file&gt;</span><br><span class="line">git commit -m <span class="string">&quot;delete &lt;sth&gt;&quot;</span></span><br><span class="line">git push origin</span><br></pre></td></tr></table></figure>
 
-<p>使用hexo在本地创建博客目录：在Shell下面使用命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init &lt;blog_dir_name&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="使用裸git库作为服务器与本地机的中转站"><a href="#使用裸git库作为服务器与本地机的中转站" class="headerlink" title="使用裸git库作为服务器与本地机的中转站"></a>使用裸git库作为服务器与本地机的中转站</h1><ul>
+<li>首先在中转服务器上建立新裸的git repo<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;repo_path&gt;</span><br><span class="line">mkdir &lt;repo_name&gt;.git</span><br><span class="line">git init --bare &lt;repo_name&gt;.git</span><br></pre></td></tr></table></figure></li>
+<li>本地机的repo，添加对应的远程引用<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 类似GitHub</span></span><br><span class="line">git remote add &lt;ref_name&gt; &lt;user_name&gt;@&lt;server_ip&gt;:&lt;repo_path&gt;/&lt;repo_name&gt;.git</span><br><span class="line">git add -A; git commit -m <span class="string">&quot;..&quot;</span>; <span class="comment"># 如果需要提交。。。</span></span><br><span class="line">git push &lt;ref_name&gt; <span class="comment"># 将当前已经提交的工作区内容提交至中转站</span></span><br></pre></td></tr></table></figure></li>
+<li>远程服务器上，clone中转站的repo<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> &lt;user_name&gt;@&lt;server_ip&gt;:&lt;repo_path&gt;/&lt;repo_name&gt;.git</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="查看文件提交历史以及修改历史"><a href="#查看文件提交历史以及修改历史" class="headerlink" title="查看文件提交历史以及修改历史"></a>查看文件提交历史以及修改历史</h1><p>使用 git log -p <filename> 即可。</p>
+<h1 id="给git-repo打tag"><a href="#给git-repo打tag" class="headerlink" title="给git repo打tag"></a>给git repo打tag</h1><p>标记版本号以及备注：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -a v1.0 -m <span class="string">&quot;release the 1.0 version&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>即可创建一整套预先设定好的博客工程模板。</p>
-<p>使用hexo创建一个新的博文：在Shell下面使用命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo n[ew] <span class="string">&quot;&lt;blog_article_title&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>查看已有的tag：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag </span><br></pre></td></tr></table></figure>
 
-<p>即可创建指定标题的文章。文章以Markdown格式的文件保存在Blog的source子目录下，我们使用对应的编辑器即可编写博客的内容。</p>
-<p>编译生成所需的网页以及发布到Github上：在Shell使用命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g[enerate]</span><br><span class="line">$ hexo d[eploy]</span><br></pre></td></tr></table></figure>
-
-<p>即可。</p>
-<h2 id="博客的配置"><a href="#博客的配置" class="headerlink" title="博客的配置"></a>博客的配置</h2><p>博客的配置文件位于博客的根目录下，名为 <code>_config.yml</code> 。重要的配置信息包含在文件的开头和结尾处。</p>
-<p>开头包括了博客的名字，作者的名字以及Blog的域名等等重要信息。结尾则配置了Blog的发布方式。</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">	<span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">	<span class="attr">repo:</span> <span class="string">https://github.com/wswslzp/wswslzp.github.io.git</span></span><br><span class="line">	<span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<p>当然，前提是你的Github里面有这个repo，没有就创建一个，以 <code>&lt;user_name&gt;.github.io</code> 来命名。</p>
+<p>提交打上tag的包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin --tags</span><br></pre></td></tr></table></figure>
+<p>注意，上面这一操作可以在github的release界面看到已经打包的源代码。</p>
 
     </div>
 
@@ -320,19 +309,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%BD%91%E7%AB%99/" rel="tag"># 网站</a>
-              <a href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag"># 博客</a>
+              <a href="/tags/Git/" rel="tag"># Git</a>
+              <a href="/tags/GitHub/" rel="tag"># GitHub</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/" rel="prev" title="Matlab定点数分析">
+                  <i class="fa fa-chevron-left"></i> Matlab定点数分析
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/04/30/hello-world/" rel="next" title="Hello World">
-                  Hello World <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

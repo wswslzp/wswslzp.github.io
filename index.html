@@ -169,7 +169,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -182,7 +182,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -219,6 +219,173 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://wswslzp.github.io/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.loli.net/2021/04/30/4u5yKnedvY2rZ8t.jpg">
+      <meta itemprop="name" content="Zhengpeng Liao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wswslzp's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">Git&Github相关</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-06 20:23:14 / 修改时间：20:30:22" itemprop="dateCreated datePublished" datetime="2021-05-06T20:23:14+08:00">2021-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="删除GitHub远程库中的文件："><a href="#删除GitHub远程库中的文件：" class="headerlink" title="删除GitHub远程库中的文件："></a>删除GitHub远程库中的文件：</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rm -r --cached &lt;delete-dir/file&gt;</span><br><span class="line">git commit -m <span class="string">&quot;delete &lt;sth&gt;&quot;</span></span><br><span class="line">git push origin</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用裸git库作为服务器与本地机的中转站"><a href="#使用裸git库作为服务器与本地机的中转站" class="headerlink" title="使用裸git库作为服务器与本地机的中转站"></a>使用裸git库作为服务器与本地机的中转站</h1><ul>
+<li>首先在中转服务器上建立新裸的git repo<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;repo_path&gt;</span><br><span class="line">mkdir &lt;repo_name&gt;.git</span><br><span class="line">git init --bare &lt;repo_name&gt;.git</span><br></pre></td></tr></table></figure></li>
+<li>本地机的repo，添加对应的远程引用<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 类似GitHub</span></span><br><span class="line">git remote add &lt;ref_name&gt; &lt;user_name&gt;@&lt;server_ip&gt;:&lt;repo_path&gt;/&lt;repo_name&gt;.git</span><br><span class="line">git add -A; git commit -m <span class="string">&quot;..&quot;</span>; <span class="comment"># 如果需要提交。。。</span></span><br><span class="line">git push &lt;ref_name&gt; <span class="comment"># 将当前已经提交的工作区内容提交至中转站</span></span><br></pre></td></tr></table></figure></li>
+<li>远程服务器上，clone中转站的repo<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> &lt;user_name&gt;@&lt;server_ip&gt;:&lt;repo_path&gt;/&lt;repo_name&gt;.git</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="查看文件提交历史以及修改历史"><a href="#查看文件提交历史以及修改历史" class="headerlink" title="查看文件提交历史以及修改历史"></a>查看文件提交历史以及修改历史</h1><p>使用 git log -p <filename> 即可。</p>
+<h1 id="给git-repo打tag"><a href="#给git-repo打tag" class="headerlink" title="给git repo打tag"></a>给git repo打tag</h1><p>标记版本号以及备注：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -a v1.0 -m <span class="string">&quot;release the 1.0 version&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>查看已有的tag：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag </span><br></pre></td></tr></table></figure>
+
+<p>提交打上tag的包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin --tags</span><br></pre></td></tr></table></figure>
+<p>注意，上面这一操作可以在github的release界面看到已经打包的源代码。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://wswslzp.github.io/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.loli.net/2021/04/30/4u5yKnedvY2rZ8t.jpg">
+      <meta itemprop="name" content="Zhengpeng Liao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Wswslzp's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Matlab定点数分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-06 20:12:09 / 修改时间：20:22:15" itemprop="dateCreated datePublished" datetime="2021-05-06T20:12:09+08:00">2021-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Matlab常常作为硬件算法的软件实现平台。数字电路设计相关的算法分析大多在RTL实现之前使用Matlab进行建模分析，其中一个重要环节是将算法中的数据进行定点化，即量化。量化策略影响到算法的性能和精度，并影响到最终结果。如何在Matlab中评估这种影响，确定数据的合理的定点量化策略，我们需要使用 <code>NumericTypeScope</code> 类来做。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">h = NumericTypeScope;</span><br><span class="line">fi_a = fi(a); <span class="comment">% a is a floating point matrix</span></span><br><span class="line">step(h, fi_a); <span class="comment">% analysis the a&#x27;s range and accuracy</span></span><br><span class="line">reset(h); <span class="comment">% reset the storage </span></span><br><span class="line">release(h); <span class="comment">% release the resource</span></span><br></pre></td></tr></table></figure>
+
+<p><code>NumericTypeScope</code> 类可以探测某个数据张量的动态范围，并自动评估出一个最好的、尽量没有精度损失的测量策略——即整数位和小数位的位宽各是多少。上述命令只能分析一次定点数，即分析一个变量。分析下一个变量必须release一下h，但并不需要每次都reset。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
