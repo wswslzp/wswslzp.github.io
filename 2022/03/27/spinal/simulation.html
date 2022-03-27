@@ -1,0 +1,65 @@
+<hr>
+<p>title: Spinal 仿真相关<br>date: 2022-03-04 17:00:24<br>tags:<br>    - SpinalHDL<br>    - ASIC<br>    - FPGA<br>categories:<br>    - SpinalHDL 硬件设计</p>
+<hr>
+<h2 id="toBoolean-函数"><a href="#toBoolean-函数" class="headerlink" title="toBoolean() 函数"></a>toBoolean() 函数</h2><p>waitUntil(cond), cond不能是函数的返回值的toBoolean</p>
+<pre><code class="scala">waitUntil(axi4.aw.fire.toBoolean) // Wrong
+//Exception in thread &quot;main&quot; java.util.NoSuchElementException: next on empty iterator
+
+waitUnitl(axi4.aw.valid.toBoolean &amp;&amp; axi4.aw.ready.toBoolean) // Correct
+</code></pre>
+<p>亦或者说，由于fire的定义如下：</p>
+<pre><code class="scala">def fire: Bool = aw.valid &amp; aw.ready
+</code></pre>
+<p>因此，不能对这一无括号的函数使用toBoolean函数。</p>
+<h2 id="软件的归软件，硬件的归硬件"><a href="#软件的归软件，硬件的归硬件" class="headerlink" title="软件的归软件，硬件的归硬件"></a>软件的归软件，硬件的归硬件</h2><p>在Testbench里，不能调用那些用于做硬件描述的函数，比如上面的 <code>fire()</code> 函数，这个函数的本质是一段硬件描述，只能出现在component里面。再比如对Bits，UInt类等等，索引它的某一位，这一段依旧是硬件描述，不能出现在component之外的地方，比如testbench中。</p>
+<p>我们只能对已经定义好的变量，使用 <code>toBoolean()</code> 这样的函数将其代表的数值结果读取到软件域。这一点是它和Verilog这类HVL所完全不同的特点。</p>
+<h2 id="waitUnitl"><a href="#waitUnitl" class="headerlink" title="waitUnitl()"></a>waitUnitl()</h2><p>类似于sv中的 <code>@(event)</code> 等待某个事件的触发。</p>
+<p>大部分时候并不需要使用到这个函数。通常使用的是</p>
+<pre><code class="scala">clockDomain.waitActiveEdgeWhere(cond :=&gt; Boolean)
+</code></pre>
+<p>这个函数的语义：一直等待到cond成立，并在成立后的第一个active edge退出等待。</p>
+<p>所有的wait函数，只能在thread中使用，不能再callback中使用。</p>
+<pre><code class="scala">// right
+fork {
+    dut.clockDomain.waitActiveEdge(3)
+}
+
+// right
+fork {
+    waitUntil(row_addr == fft_config.row)
+}
+
+// wrong
+dut.clockDomain.onSamplings {
+    dut.clockDomain.waitActiveEdge(3)
+}
+</code></pre>
+<h3 id="等待某个延时-10ps"><a href="#等待某个延时-10ps" class="headerlink" title="等待某个延时 #10ps"></a>等待某个延时 #10ps</h3><p>可以使用函数sleep（）</p>
+<pre><code class="scala">sleep(10)
+</code></pre>
+<h2 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h2><p>尽量不在 clockDomain.onsampling {…} 内部使用 fork</p>
+<h2 id="使用toX-函数，将硬件域的数据转换至软件域"><a href="#使用toX-函数，将硬件域的数据转换至软件域" class="headerlink" title="使用toX()函数，将硬件域的数据转换至软件域"></a>使用toX()函数，将硬件域的数据转换至软件域</h2><p>做定点数相关的转换时，注意数据类型本身的位宽问题。比如</p>
+<pre><code class="scala">val a_sint = 1 &lt;&lt; bitCounts // when bit counts &lt; 32 
+val a_slong = 1L &lt;&lt; bitCounts // when 32 &lt;= bit counts &lt; 64
+</code></pre>
+<h2 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h2><p>SpinalSim使用Verilator仿真，分为三个阶段：</p>
+<ol>
+<li>verilate阶段：将Verilog文件翻译为cpp</li>
+<li>compile阶段：将cpp文件加上testbench的cpp文件编译为可执行文件</li>
+<li>simulation阶段：运行可执行文件，开始仿真过程</li>
+</ol>
+<p>对于大设计，会导致以上三个阶段的运行速度不合理的慢，因此需要合理优化</p>
+<h3 id="1-Verilate阶段"><a href="#1-Verilate阶段" class="headerlink" title="1 Verilate阶段"></a>1 Verilate阶段</h3><p>数量巨大的register，以及Mux的sel信号的位宽太大（两位数）以及其他的一些问题可能会导致这一阶段所消耗的时间太长。</p>
+<p>生成的Verilog网表大小太大也会导致这一阶段时间冗长。</p>
+<p><strong>解决办法</strong>：1. 改变你的电路结构，规避上面的问题。这些问题往往意味设计的不合理性。2. 使用层次化的verilate流程，但是spinalsim对此没有支持，不好做。</p>
+<h3 id="2-Compile阶段"><a href="#2-Compile阶段" class="headerlink" title="2 Compile阶段"></a>2 Compile阶段</h3><p>默认情况下，spinalsim使用g++进行多线程编译，因此这一阶段的运行时间与工作站的CPU核数密切相关。尽量在多核系统上跑。</p>
+<aside>
+⚠️ 需要注意的是，这里编译的时候默认就是会占用所有的cpu，没有看到限制的方法。除非限制sbt的运行条件。
+
+</aside>
+
+<p>对于可能需要重复多次编译同样设计的问题，安装ccache，并将环境变量OBJCACHE指向ccache。这样可以缓存上次编译过的cpp内容，有效避免重复编译。</p>
+<h3 id="3-simulation阶段"><a href="#3-simulation阶段" class="headerlink" title="3 simulation阶段"></a>3 simulation阶段</h3><p>默认情况下，spinalsim不会使用verilator的多线程仿真。需要使用simulation flag： <code>--threads &lt;cpu_num&gt; --trace-threads &lt;cpu_num&gt;</code> 。具体设置如下：</p>
+<pre><code class="scala">SimConfig.addSimulationFlag(&quot;--threads 32 --trace-threads 32&quot;)
+</code></pre>
+<p>这样可以使仿真可执行文件以多线程的形式运行。</p>

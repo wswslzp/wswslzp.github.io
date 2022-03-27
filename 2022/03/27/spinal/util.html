@@ -1,0 +1,93 @@
+<hr>
+<p>title: Spinal Utilities<br>date: 2022-03-27 21:24:54<br>tags:</p>
+<hr>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>SpinalHDL存在大量的零碎的feature，很不起眼但是非常有用。 <code>core</code> 模块和 <code>lib</code> 模块均包含有 <code>util</code> ，这里略微总结不在官方文档内的比较有用的功能。</p>
+<h2 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h2><p>从Scalal原生类型隐式转换到Spinal的硬件类型，并提供硬件描述相关功能。抑或是对一些原有类型的扩展。</p>
+<h3 id="Seq到Vec"><a href="#Seq到Vec" class="headerlink" title="Seq到Vec"></a>Seq到Vec</h3><p><code>import spinal.lib._</code> </p>
+<p><code>class TraversableOncePimped[T &lt;: Data](pimped: Seq[T])</code> </p>
+<ul>
+<li>提供类似于Vec使用UInt访问内部数据的功能</li>
+<li>提供 <code>reduceBalanceTree</code></li>
+<li>提供 <code>asBits</code></li>
+<li>提供简单的集合查找和计数功能：<ul>
+<li><code>def sExist(condition: T =&gt; Bool): Bool = (pimped map condition).fold(False)(_ || _)</code></li>
+<li><code>def sContains(value: T) : Bool = sExist(_ === value)</code></li>
+<li><code>def sFindFirst(condition: T =&gt; Bool) : (Bool,UInt)</code></li>
+<li><code>def sCount(condition: T =&gt; Bool): UInt = SetCount((pimped.map(condition)))</code></li>
+<li><code>def sCount(value: T): UInt = sCount(_ === value)</code></li>
+</ul>
+</li>
+</ul>
+<p>特殊的， <code>Seq[Bool]</code> 还提供 <code>orR, andR, xorR</code> 功能，将内部的Boolean全部与或非起来。</p>
+<p>更基本的类 <code>class TraversableOnceAnyPimped[T &lt;: Any](pimped: Seq[T])</code> 支持 <code>whenIndexed</code> 功能，</p>
+<pre><code class="scala">def apply(id : UInt)(gen : (T) =&gt; Unit): Unit ={
+  assert(widthOf(id) == log2Up(pimped.size))
+  for((e,i) &lt;- pimped.zipWithIndex) {
+    when(id === i){
+      gen(e)
+    }
+  }
+}
+</code></pre>
+<h3 id="Tuple到Bits"><a href="#Tuple到Bits" class="headerlink" title="Tuple到Bits"></a>Tuple到Bits</h3><p><code>import spinal.core._</code> </p>
+<p><code>class TuplePimperBase(product: Product)</code></p>
+<p>提供类似于Verilog位拼接的功能，如：</p>
+<pre><code class="scala">assign {cout, s} = {a, b, c};
+||
+(cout, s) := (a, b, c).asBits
+</code></pre>
+<h3 id="字符串转Vec-Bits"><a href="#字符串转Vec-Bits" class="headerlink" title="字符串转Vec[Bits]"></a>字符串转Vec[Bits]</h3><pre><code class="scala">val avec = &quot;0123abcd&quot;.toVecOfByte
+</code></pre>
+<h3 id="Stream、Flow及Fragment自动转成其payload"><a href="#Stream、Flow及Fragment自动转成其payload" class="headerlink" title="Stream、Flow及Fragment自动转成其payload"></a>Stream、Flow及Fragment自动转成其payload</h3><p>需要 <code>import DataCarrier._</code> </p>
+<p>不在需要引用 <code>payload</code> 来获得其payload。</p>
+<h3 id="时钟域的扩展"><a href="#时钟域的扩展" class="headerlink" title="时钟域的扩展"></a>时钟域的扩展</h3><p>提供异步复位同步释放的扩展，可以从异步复位时钟域经由同步器获得新的同步释放时钟域</p>
+<p><code>def withBufferedResetFrom(resetCd : ClockDomain, bufferDepth : Int = BufferCC.defaultDepth.get) : ClockDomain</code></p>
+<h2 id="对Seq的when"><a href="#对Seq的when" class="headerlink" title="对Seq的when"></a>对Seq的when</h2><ul>
+<li><code>whenMasked</code><pre><code class="scala">whenMasked(avec, amask: Bits) {
+    active(sth)
+}
+</code></pre>
+</li>
+<li><code>whenIndexed</code><pre><code class="scala">whenIndexed(avec, aindex: UInt) {
+    active(sth)
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="带优先级的Mux"><a href="#带优先级的Mux" class="headerlink" title="带优先级的Mux"></a>带优先级的Mux</h2><pre><code class="scala">object PriorityMux{
+  def apply[T &lt;: Data](in: Seq[(Bool, T)]): T = {
+    if (in.size == 1) {
+      in.head._2
+    } else {
+      Mux(in.head._1, in.head._2, apply(in.tail)) //Inttelij right code marked red
+    }
+  }
+  def apply[T &lt;: Data](sel: Seq[Bool], in: Seq[T]): T = apply(sel zip in)
+  def apply[T &lt;: Data](sel: Bits, in: Seq[T]): T = apply(sel.asBools.zip(in))
+}
+</code></pre>
+<h2 id="延迟的标志信号-DelayEvent"><a href="#延迟的标志信号-DelayEvent" class="headerlink" title="延迟的标志信号 DelayEvent"></a>延迟的标志信号 <code>DelayEvent</code></h2><p>可以将一个标志信号延时多个cycle。（对这一flag直接 <code>Delay</code> 不是不行，只是在延迟的cycle数太大时过于浪费寄存器资源）存在两个控制延迟的方式，</p>
+<ul>
+<li><code>def apply(event: Bool, cycle: BigInt): Bool</code></li>
+<li><code>def apply(event: Bool, cycle: UInt): Bool</code></li>
+</ul>
+<h2 id="计数器扩展"><a href="#计数器扩展" class="headerlink" title="计数器扩展"></a>计数器扩展</h2><p>可增减计数器，多请求计数器。</p>
+<ul>
+<li><code>CounterUpDown</code> 提供 <code>decrement</code> 方法减一</li>
+<li>多请求：<pre><code class="scala">object CounterMultiRequest {
+  def apply(width: Int, requests : (Bool,(UInt) =&gt; UInt)*): UInt = {
+    val counter = Reg(UInt(width bit)) init(0)
+    var counterNext = cloneOf(counter)
+    counterNext := counter
+    for((cond,func) &lt;- requests){
+      when(cond){
+        counterNext \= func(counterNext)
+      }
+    }
+    counter := counterNext
+    counter
+  }
+}
+</code></pre>
+</li>
+</ul>

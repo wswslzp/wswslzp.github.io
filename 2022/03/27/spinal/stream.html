@@ -1,0 +1,242 @@
+<hr>
+<p>title: Spinal Stream协议<br>date: 2022-03-04 16:58:42<br>tags:<br>    - SpinalHDL<br>    - ASIC<br>    - FPGA<br>categories:<br>    - SpinalHDL 硬件设计</p>
+<hr>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>Stream实现了valid-ready握手协议，用于blocking传输。基于Stream，SpinalHDL提供了大量的方法，以及相关的building blocks。</p>
+<h2 id="小逻辑块"><a href="#小逻辑块" class="headerlink" title="小逻辑块"></a>小逻辑块</h2><p>以下介绍9大类与Stream相关的常用硬件电路实现，它们均作为Stream的成员方法提供，往往不会单独成为一个Module。这些方法的特点是其返回值往往就是被驱动的下游，因此可以好几种方法级联使用，轻松组合出想要的连接。</p>
+<h3 id="Flow转换"><a href="#Flow转换" class="headerlink" title="Flow转换"></a>Flow转换</h3><p>将blocking传输转为non-blocking 传输，即flow协议。</p>
+<ul>
+<li><code>toFlow</code> ，flow valid、payload直接赋值，ready always true</li>
+<li><code>toFlowFire</code> , flow valid等于fire，payload直接赋值</li>
+<li><code>asFlow</code> ，ready不管，flow valid、payload直接赋值</li>
+</ul>
+<h3 id="突发传输"><a href="#突发传输" class="headerlink" title="突发传输"></a>突发传输</h3><p>在Burst连续传输的情况下，我们需要给负载payload增加一个last标志。</p>
+<ul>
+<li><code>addFragmentLast(last : Bool) : Stream[Fragment[T]]</code> last由外部计数器逻辑处理</li>
+<li><code>addFragmentLast(counter: Counter) : Stream[Fragment[T]]</code> last根据传入的计数器处理</li>
+</ul>
+<h3 id="状态检测"><a href="#状态检测" class="headerlink" title="状态检测"></a>状态检测</h3><p>用于表明当前stream所处的状态，是否拥堵？是否空闲？是否正处于握手状态？</p>
+<ul>
+<li><code>isStall</code> 表示当前cycle是否正在堵塞，ready处于deassert状态</li>
+<li><code>isNew</code> 表示当前cycle是否有新的transaction发生，为堵塞结束后的第一个cycle</li>
+<li><code>isFree</code> 表示当前并不拥堵：ready为高或者valid为低，没有data需要上路。</li>
+<li><code>fire</code> 表示当前cycle是否处于握手阶段</li>
+</ul>
+<h3 id="Repeater"><a href="#Repeater" class="headerlink" title="Repeater"></a>Repeater</h3><p>在link上面增加寄存器（repeater），以优化timing。</p>
+<ul>
+<li><code>m2sPipe(collapsBubble: Boolean=true, crossClockData: Boolean=false, flush: Bool=null,holdPayload: Boolean=false)</code> , 给forward flow，即valid、payload部分打拍。同样的， <code>stage()</code> 则是 <code>m2sPipe()</code></li>
+<li><code>s2mPipe(stagesCount: Int)</code> 则是在backward ready上打拍，forward部分仍然直连。</li>
+<li><code>validPipe()</code> 则是只在valid上打拍，payload与ready没打拍</li>
+<li><code>halfPipe()</code> 所有信号都打拍，而bandwidth小了一半。</li>
+<li><code>pipeline</code> 等于上面的各种组合</li>
+</ul>
+<p>以上函数返回新的被驱动的Stream</p>
+<h3 id="连接符号"><a href="#连接符号" class="headerlink" title="连接符号"></a>连接符号</h3><p>以下函数、操作符返回操作符右边的stream，即不是 <code>this</code> stream，而是作为函数参数的 <code>that</code> stream。这里的连接符号和上面各种打拍组合起来，方便使用。</p>
+<ul>
+<li><code>&lt;&lt;, &gt;&gt;</code> 直连</li>
+<li><code>&lt;-&lt;, &gt;-&gt;</code> 只有Flow的部分被加了一级流水，即m2sPipe</li>
+<li><code>&lt;/&lt;, &gt;/&gt;</code> 只有ready部分加了一级流水，即s2mPipe</li>
+<li><code>&lt;-/&lt;, &gt;/-&gt;</code> Flow和ready的部分均加了一级流水，即m2sPipe.s2mPipe</li>
+</ul>
+<p>还有其他连接符，如 <code>&amp;</code> <code>~</code> <code>~~</code> 这类后面再说。</p>
+<h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><p>这些方法，通过一个condition信号，来完成基本的流量控制任务，比如halt住，丢弃掉，或者放入buffer（FIFO）。</p>
+<ul>
+<li><code>continueWhen(cond: Bool) \ haltWhen(cond: Bool)</code> ，当cond为高的时候，前者才继续传输，而后者则阻塞传输。（符号 <code>&amp;</code> 和 <code>continueWhen(cond)</code> 一样）</li>
+<li><code>throwWhen(cond: Bool) \ takeWhen(cond: Bool)</code> , 当cond为高，前者丢弃掉当前的事务，而后者则只有cond为低的时候才丢弃。</li>
+</ul>
+<p>或者通过一个FIFO，来缓存事务，以增加吞吐</p>
+<ul>
+<li><code>queue(size: Int)</code> ，在link上增加一个深度为size的同步FIFO作为一个buffer。</li>
+<li><code>queueWithOccupancy(size: Int): (Stream[T],UInt)</code> ，在 credit-base 传输中，可以返回buffer当前的占用率，作为credit告知upstream是否还能继续发起传输。</li>
+<li><code>queueWithAvailability(size: Int): (Stream[T], UInt)</code> ，返回buffer及其当前空置率，告知upstream。</li>
+<li><code>queueLowLatency(size: Int, latency: Int = 0)</code> 增加一个无延迟或低延迟的buffer</li>
+</ul>
+<h3 id="分频处理"><a href="#分频处理" class="headerlink" title="分频处理"></a>分频处理</h3><p>下游时钟域和上游同步，但被分频得更慢。（<em>不一定用在分频时钟的设计中</em>）</p>
+<ul>
+<li><code>repeat(times: Int): (Stream[T], UInt)</code> ，每个beat都被至少重复times次，使之能被下游的时钟catch。上游的吞吐<strong>因此降低了times倍</strong>。</li>
+<li><code>slowdown(factor: Int): Stream[Vec[T]]</code> ，内部有一个移位寄存器做串并转换，下游的payload比上游宽factor倍，在ready始终enable下，每隔factor个cycle，下游fire一次。上游的吞吐<strong>不会降低。</strong></li>
+</ul>
+<h3 id="CDC处理"><a href="#CDC处理" class="headerlink" title="CDC处理"></a>CDC处理</h3><p>存在多时钟域的时候，可能需要处理跨时钟域的握手问题。包括简单的二级buffer，或者异步FIFO。</p>
+<p>二级buffer：</p>
+<ul>
+<li><code>ccToggle(pushClock: ClockDomain, popClock: ClockDomain)</code> 打两拍</li>
+<li><code>ccToggleWithoutBuffer(pushClock: ClockDomain, popClock: ClockDomain)</code> 不打拍（？？）直接过。</li>
+</ul>
+<p>异步FIFO：</p>
+<ul>
+<li><code>queue(size: Int, pushClock: ClockDomain, popClock: ClockDomain)</code> , 增加一个异步FIFO</li>
+<li><code>queueWithPushOccupancy(size: Int, pushClock: ClockDomain, popClock: ClockDomain): (Stream[T], UInt)</code> ，返回异步buffer及其占用率</li>
+</ul>
+<h3 id="负载转换"><a href="#负载转换" class="headerlink" title="负载转换"></a>负载转换</h3><p>在某些场景下，上游的Stream需要经过某个处理，再与下游的Stream连接。这里，我们把this称为变换前的上游，that则称为变换后的下游。</p>
+<p><strong>上下游直连，负载不变：</strong></p>
+<ul>
+<li><code>connectFrom(that: Stream[T]): Stream[T]</code> ，返回下游</li>
+<li><code>arbitrationFrom(that: Stream[T]): Unit</code> ，只直连上下流的握手信号，payload给其他逻辑管。</li>
+</ul>
+<p><strong>通常情况下，我们提供一个函数，描述了负载转换的逻辑。</strong></p>
+<p>这里，函数 <code>transformation: (this.payload.type, that.payload.type) =&gt; Unit</code> 表示了这种转换:</p>
+<ul>
+<li><code>translateFrom(that)(transformation)</code> 握手信号直连，返回<code>this</code> 上游。</li>
+</ul>
+<p>镜像地， <code>transformation: (that.payload.type, this.payload.type) =&gt; Unit</code> :</p>
+<ul>
+<li><code>translateInto(that)(transformation)</code> 用法与上面对偶。返回 <code>that</code> 下游。</li>
+</ul>
+<p><strong>转换函数还可以是更直接的形式</strong>： <code>transformer: (T) =&gt; T2</code> ，直接表示从上游的payload到下流payload的一个转换函数，并通过连接符 <code>~~</code> 来使用，<strong>返回下游</strong>：</p>
+<pre><code class="scala">val upStream: Stream[T]
+...
+val downStream: Stream[T2] = upStream ~~ { upPayload =&gt; doSomethingOn(upPayload) }
+</code></pre>
+<p>另外，若<strong>转换由外部逻辑预先完成</strong>，我们只需要将转换后的payload直接送给下游即可：</p>
+<ul>
+<li><code>translateWith(thatPayload:T)</code> that是新的下游的payload，返回下游。</li>
+<li>连接符 <code>~</code> 和上面的方法一样。</li>
+</ul>
+<p>还有的场景下，下游的payload数据类型有变化，只是继承上游的握手信号，但<strong>暂时不对下游的payload做连接</strong>。</p>
+<ul>
+<li><code>swapPayload(that: HardType[T2]): Stream[T2]</code> 返回变换类型的新下游。</li>
+</ul>
+<p>或者<strong>做bit-level连接：</strong></p>
+<ul>
+<li><code>transmuteWith[T2 &lt;: Data](that: HardType[T2]): Stream[T2]</code> 返回新下游，下游负载被上游做了bit-level赋值。</li>
+</ul>
+<h2 id="大逻辑块"><a href="#大逻辑块" class="headerlink" title="大逻辑块"></a>大逻辑块</h2><p>这里Stream相关的功能，往往以单独的模块提供。提供的模块包括：仲裁器，Mux/DeMux，Fork/Join， 同步FIFO/异步FIFO，二级buffer，位宽调制器等。</p>
+<h3 id="仲裁处理"><a href="#仲裁处理" class="headerlink" title="仲裁处理"></a>仲裁处理</h3><p>详见SpinalHDL文档。这里做点补充：</p>
+<p>提供的仲裁机制：</p>
+<ul>
+<li><code>lowerFirst</code>：优先级固定。</li>
+<li><code>sequentialOrder</code>：记录已经发射的次数，第几次发射，就选择第几号</li>
+<li><code>roundRobin</code>：不必多说。</li>
+</ul>
+<p>提供的锁机制：</p>
+<ul>
+<li><code>none</code>：不锁，仲裁结果随时可能变化</li>
+<li><code>transactionLock</code>：满足valid-ready握手规则，一旦仲裁后，valid assert而ready尚未 assert，必须维持仲裁结果不变。这里只是单发传输</li>
+<li><code>fragmentLock</code>: 满足握手规则的前提下，支持突发传输。在last assert之前，保持仲裁结果不变。</li>
+</ul>
+<h3 id="Mux-Demux"><a href="#Mux-Demux" class="headerlink" title="Mux\Demux"></a>Mux\Demux</h3><p>NoC的crossbar结构基本单元。</p>
+<p>上游多个stream连接到下游一个stream，用一个选择信号选通上游某个通道，使用mux；往往配合仲裁器使用，选择信号由仲裁器给出。</p>
+<pre><code class="scala">object StreamMux {
+  def apply[T &lt;: Data](select: UInt, inputs: Seq[Stream[T]]): Stream[T] = {
+    val vec = Vec(inputs)
+StreamMux(select, vec)
+  }
+
+  def apply[T &lt;: Data](select: UInt, inputs: Vec[Stream[T]]): Stream[T] = {
+    val c = new StreamMux(inputs(0).payload, inputs.length)
+    (c.io.inputs, inputs).zipped.foreach(_ &lt;&lt; _)
+    c.io.select:= select
+    c.io.output
+  }
+}
+</code></pre>
+<p>上游一个stream连接到下游多个stream，用一个选择信号选通下游某个通道，使用demux；往往配合decoder使用，根据地址将传输送往特定的slave。</p>
+<pre><code class="scala">object StreamDemux{
+  def apply[T &lt;: Data](input: Stream[T], select : UInt, portCount: Int) : Vec[Stream[T]] = {
+    val c = new StreamDemux(input.payload,portCount)
+    c.io.input&lt;&lt; input
+    c.io.select:= select
+    c.io.outputs
+  }
+}
+</code></pre>
+<h3 id="Fork"><a href="#Fork" class="headerlink" title="Fork"></a>Fork</h3><p>上游需要广播到多个下游。</p>
+<pre><code class="scala">object StreamFork {
+  def apply[T &lt;: Data](input: Stream[T], portCount: Int, synchronous: Boolean = false): Vec[Stream[T]] = {
+    val fork = new StreamFork(input.payloadType, portCount, synchronous).setCompositeName(input, &quot;fork&quot;, true)
+    fork.io.input&lt;&lt; input
+    return fork.io.outputs
+}
+}
+</code></pre>
+<p>同步机制：</p>
+<ul>
+<li>如果需要同步，那么只有当所有下游都ready，上游才能fire，下游可以同时拿到东西。这一机制可以造成死锁。同时违反axi握手依赖规则。</li>
+<li>反之，每个下游单独ready，单独拿到东西。上游在所有下游全部fire之前stall住。</li>
+</ul>
+<h3 id="Join"><a href="#Join" class="headerlink" title="Join"></a>Join</h3><p>上游的多个stream，其payload打包，送给一个下游stream。握手信号做了简单处理，使得下游只有在上游都fire了才能fire。</p>
+<pre><code class="scala">object StreamJoin {
+...
+// 简单打包两个相同的payload
+def apply[T1 &lt;: Data,T2 &lt;: Data](source1: Stream[T1], source2: Stream[T2]): Stream[TupleBundle2[T1, T2]]
+// 这里只保留上游join到下游的握手信号，payload另外给，因为不同的payload可能类型不同
+def arg(sources : Stream[_]*) : Event 
+// 多个类型相同的payload放在一起，打包成一个vec
+def vec[T &lt;: Data](sources: Seq[Stream[T]]): Stream[Vec[T]]
+</code></pre>
+<h3 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO"></a>FIFO</h3><p>同步FIFO和异步FIFO不用多说，embed在上面的小逻辑块部分。</p>
+<p>需要补充的：</p>
+<ul>
+<li><code>StreamFifoLowLatency</code> 低延迟同步FIFO</li>
+<li><code>StreamFifoMultiChannelSharedSpace</code> 没做完？？</li>
+</ul>
+<h3 id="位宽调制"><a href="#位宽调制" class="headerlink" title="位宽调制"></a>位宽调制</h3><p>上下游之间数据位宽不同，连接需要做一定处理。上游宽度大，下游需要拆分成多笔传输；下游宽度大，上游多笔传输合并成一笔。</p>
+<p>单发传输：</p>
+<pre><code class="scala">object StreamWidthAdapter {
+...
+def make[T &lt;: Data, T2 &lt;: Data](input : Stream[T], outputPayloadType : HardType[T2], endianness: Endianness = LITTLE, padding : Boolean = false) : Stream[T2] = {
+  val ret = Stream(outputPayloadType())
+StreamWidthAdapter(input,ret,endianness,padding)
+  ret
+}
+</code></pre>
+<p>突发传输：</p>
+<pre><code class="scala">def make[T &lt;: Data, T2 &lt;: Data](input : Stream[Fragment[T]], outputPayloadType : HardType[T2], endianness: Endianness = LITTLE, padding : Boolean = false) : Stream[Fragment[T2]] = {
+  val ret = Stream(Fragment(outputPayloadType()))
+StreamFragmentWidthAdapter(input,ret,endianness,padding)
+  ret
+}
+</code></pre>
+<h3 id="StreamTransactionExtender"><a href="#StreamTransactionExtender" class="headerlink" title="StreamTransactionExtender"></a><code>StreamTransactionExtender</code></h3><p>用途不明。</p>
+<p>功能：动态输入一个计数上限，计数器到达以前上游stall，直至达到上限才fire。下游payload根据计数器值，<strong>发生相应变化或者不变</strong>。</p>
+<pre><code class="scala">class StreamTransactionExtender[T &lt;: Data, T2 &lt;: Data](
+    dataType: HardType[T],
+    outDataType: HardType[T2],
+    countWidth: Int,
+    var driver: (UInt, T) =&gt; T2 // 下游负载变化函数
+) extends Component {
+val io = new Bundle {
+        val count  = in UInt (countWidth bit) //计数上限
+        val input  = slave Stream dataType
+        val output = master Stream outDataType
+    }
+...
+
+object StreamTransactionExtender {
+    def apply[T &lt;: Data](input: Stream[T], count: UInt)(
+        driver: (UInt, T) =&gt; T = (_: UInt, p: T) =&gt; p // 默认不变
+    ): Stream[T] = {
+        val c = new StreamTransactionExtender(input.payloadType, input.payloadType, count.getBitsWidth, driver)
+        c.io.input &lt;&lt; input
+        c.io.count := count
+        c.io.output
+    }
+...
+</code></pre>
+<h2 id="验证用具"><a href="#验证用具" class="headerlink" title="验证用具"></a>验证用具</h2><p>在 <code>spinal.lib.sim._</code> 下，有专门用于验证Stream接口的工具。包括了基本的 <code>StreamDriver</code> 和基本的 <code>StreamMonitor</code> 。</p>
+<h3 id="Stream-Driver"><a href="#Stream-Driver" class="headerlink" title="Stream Driver"></a>Stream Driver</h3><p>其核心定义：</p>
+<p><code>class StreamDriver[T &lt;: Data](stream : Stream[T], clockDomain: ClockDomain, var driver : (T) =&gt; Boolean)</code></p>
+<p>除了传入一个Stream接口以外，还要提供一个driver函数，等效于以下操作：</p>
+<pre><code class="scala">fork{
+    stream.valid #= false
+    while(true) {
+      clockDomain.waitSampling(transactionDelay())
+      clockDomain.waitSamplingWhere(driver(stream.payload))
+      stream.valid #= true
+      clockDomain.waitSamplingWhere(stream.ready.toBoolean)
+      stream.valid #= false
+     stream.payload.randomize()
+    }
+}
+</code></pre>
+<p>driver只需对payload进行驱动操作，以及控制仿真进程的结束。</p>
+<h3 id="Stream-Monitor"><a href="#Stream-Monitor" class="headerlink" title="Stream Monitor"></a>Stream Monitor</h3><p>其定义如下：</p>
+<pre><code class="scala">class StreamMonitor[T &lt;: Data](stream : Stream[T], clockDomain: ClockDomain){
+  valcallbacks= ArrayBuffer[(T) =&gt; Unit]()
+
+  def addCallback(callback : (T) =&gt; Unit): this.type = {
+callbacks+= callback
+    this
+  }
+...
+</code></pre>
+<p>需要用户手动添加回调函数进行数据收集操作。</p>
