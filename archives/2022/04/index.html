@@ -23,23 +23,16 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"wswslzp.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="Matlab常常作为硬件算法的软件实现平台。数字电路设计相关的算法分析大多在RTL实现之前使用Matlab进行建模分析，其中一个重要环节是将算法中的数据进行定点化，即量化。量化策略影响到算法的性能和精度，并影响到最终结果。如何在Matlab中评估这种影响，确定数据的合理的定点量化策略，我们需要使用 NumericTypeScope 类来做。 12345h &#x3D; NumericTypeScope;fi">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Matlab定点数分析">
-<meta property="og:url" content="https://wswslzp.github.io/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Wswslzp&#39;s Blog">
+<meta property="og:url" content="https://wswslzp.github.io/archives/2022/04/index.html">
 <meta property="og:site_name" content="Wswslzp&#39;s Blog">
-<meta property="og:description" content="Matlab常常作为硬件算法的软件实现平台。数字电路设计相关的算法分析大多在RTL实现之前使用Matlab进行建模分析，其中一个重要环节是将算法中的数据进行定点化，即量化。量化策略影响到算法的性能和精度，并影响到最终结果。如何在Matlab中评估这种影响，确定数据的合理的定点量化策略，我们需要使用 NumericTypeScope 类来做。 12345h &#x3D; NumericTypeScope;fi">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-06T12:12:09.000Z">
-<meta property="article:modified_time" content="2021-05-06T12:22:15.662Z">
 <meta property="article:author" content="Zhengpeng Liao">
-<meta property="article:tag" content="Matlab">
-<meta property="article:tag" content="定点数">
-<meta property="article:tag" content="硬件算法设计">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://wswslzp.github.io/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/">
+<link rel="canonical" href="https://wswslzp.github.io/archives/2022/04/">
 
 
 <script class="page-configurations">
@@ -47,11 +40,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
-<title>Matlab定点数分析 | Wswslzp's Blog</title>
+<title>归档 | Wswslzp's Blog</title>
   
 
 
@@ -225,104 +218,49 @@
 </noscript>
 
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner archive posts-collapse">
 
 
   
-
-
-<div class="post-block">
   
   
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        <span class="collection-header">嗯..! 目前共计 17 篇日志。 继续努力。</span>
+      </div>
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wswslzp.github.io/2021/05/06/Matlab%E5%AE%9A%E7%82%B9%E6%95%B0%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://i.loli.net/2021/04/30/4u5yKnedvY2rZ8t.jpg">
-      <meta itemprop="name" content="Zhengpeng Liao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Wswslzp's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Matlab定点数分析
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
       
-
-      <time title="创建时间：2021-05-06 20:12:09 / 修改时间：20:22:15" itemprop="dateCreated datePublished" datetime="2021-05-06T20:12:09+08:00">2021-05-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <p>Matlab常常作为硬件算法的软件实现平台。数字电路设计相关的算法分析大多在RTL实现之前使用Matlab进行建模分析，其中一个重要环节是将算法中的数据进行定点化，即量化。量化策略影响到算法的性能和精度，并影响到最终结果。如何在Matlab中评估这种影响，确定数据的合理的定点量化策略，我们需要使用 <code>NumericTypeScope</code> 类来做。</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">h = NumericTypeScope;</span><br><span class="line">fi_a = fi(a); <span class="comment">% a is a floating point matrix</span></span><br><span class="line">step(h, fi_a); <span class="comment">% analysis the a&#x27;s range and accuracy</span></span><br><span class="line">reset(h); <span class="comment">% reset the storage </span></span><br><span class="line">release(h); <span class="comment">% release the resource</span></span><br></pre></td></tr></table></figure>
-
-<p><code>NumericTypeScope</code> 类可以探测某个数据张量的动态范围，并自动评估出一个最好的、尽量没有精度损失的测量策略——即整数位和小数位的位宽各是多少。上述命令只能分析一次定点数，即分析一个变量。分析下一个变量必须release一下h，但并不需要每次都reset。</p>
-
+    <div class="collection-year">
+      <span class="collection-header">2022</span>
     </div>
 
-    
-    
-    
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2022-04-11T16:37:25+08:00"
+              content="2022-04-11">
+          04-11
+        </time>
+      </div>
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Matlab/" rel="tag"># Matlab</a>
-              <a href="/tags/%E5%AE%9A%E7%82%B9%E6%95%B0/" rel="tag"># 定点数</a>
-              <a href="/tags/%E7%A1%AC%E4%BB%B6%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/" rel="tag"># 硬件算法设计</a>
-          </div>
+      <div class="post-title">
+          <a class="post-title-link" href="/2022/04/11/spinal/membb/" itemprop="url">
+            <span itemprop="name">Memory Blackboxing</span>
+          </a>
+      </div>
 
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2021/04/30/hello-world/" rel="prev" title="Hello World">
-                  <i class="fa fa-chevron-left"></i> Hello World
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2021/05/06/Git-Github%E7%9B%B8%E5%85%B3/" rel="next" title="Git&Github相关">
-                  Git&Github相关 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
-</div>
 
 
-
-
-
+    </div>
+  </div>
+  
+  
+  
 
 
 <script>
